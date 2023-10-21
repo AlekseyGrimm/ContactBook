@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Книга контактов</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar navbar-light bg-light">
+        <span class="navbar-brand">Книга контактов</span>
+        <button id="add-contact-btn" class="btn btn-primary">Добавить контакт</button>
+        <button id="groups-btn" class="btn btn-primary">Группы</button>
+    </header>
+    
+    <div class="container mt-5">
+        <ul id="group-accordion" class="accordion">
+            <!-- Группы в виде аккордеонов с контактами -->
+        </ul>
+    </div>
+
+    <!-- Оверлей для затемнения фона -->
+    <div class="overlay"></div>
+
+    <!-- Боковая панель для добавления контактов -->
+    <div id="sidebar" class="sidebar">
+        <button id="close-contact" class="close-button">&times;</button>
+        <div class="sidebar-header">
+            <h3>Добавление контакта</h3>
+        </div>
+        <div class="sidebar-body">
+            <!-- Форма добавления контакта -->
+            <form id="contact-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="name" placeholder="Введите ФИО">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="number" placeholder="Введите номер">
+                </div>
+                <div class="form-group">
+                    <select class="form-control" id="group">
+                        <!-- Пустое выпадающее меню, заполнение динамично -->
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="sidebar-footer">
+            <button id="save-contact" class="btn btn-primary">Сохранить</button>
+        </div>
+    </div>
+
+    <!-- Боковая панель для групп контактов -->
+    <div id="group-sidebar" class="sidebar">
+        <button id="close-groups" class="close-button">&times;</button>
+        <div class="sidebar-header">
+            <h3>Группы контактов</h3>
+        </div>
+        <div class="sidebar-body">
+
+        </div>
+        <div class="sidebar-footer">
+            <input type="text" class="form-control" id="new-group" placeholder="Введите название">
+            <button id="add-group" class="btn btn-primary">Добавить</button>
+            <button id="save-groups" class="btn btn-primary">Сохранить</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
