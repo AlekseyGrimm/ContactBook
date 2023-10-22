@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.querySelector('.overlay')
-    const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
+    const overlay = document.querySelector('.overlay')    
     const savedGroups = JSON.parse(localStorage.getItem('groups')) || []
     const groupDropdown = document.querySelector('#group')
+    const groupSidebar = document.querySelector('#group-sidebar')
 
     const displayGroupsAccordion = () => {
+        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
         const groupAccordion = document.querySelector('#group-accordion')
         groupAccordion.innerHTML = ''
-
         savedGroups.forEach((group) => {
-            const groupLi = document.createElement('li')
+            const groupLi = document.createElement('div')
             const groupButton = document.createElement('button')
             groupButton.className = 'accordion-button'
             groupButton.textContent = group
@@ -34,7 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (contact.group === group) {
                     const contactLi = document.createElement('li')
                     contactLi.textContent = `${contact.name} (${contact.number})`
+
+                    const deleteButton = document.createElement('button')
+                    deleteButton.className = 'delete-contact-btn'
+                    deleteButton.innerHTML = '<i class="bi bi-trash"></i>'
+                    deleteButton.addEventListener('click', () => deleteContact(contact))
+
                     groupContactList.appendChild(contactLi)
+                    contactLi.appendChild(deleteButton)
                 }
             })
 
@@ -58,11 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             savedGroups.forEach((group) => {
                 const groupItem = document.createElement('div')
+                groupItem.classList.add('sidebar-body-group')
                 groupItem.textContent = group
                 
                 // Кнопка "Удалить" для каждой группы
                 const deleteButton = document.createElement('button')
-                deleteButton.textContent = `x`
+                deleteButton.setAttribute('type', 'button')
+                deleteButton.setAttribute('class', 'btn-close')
+                deleteButton.setAttribute('aria-label', 'Close')
                 deleteButton.addEventListener('click', () => {
                     const index = savedGroups.indexOf(group)
                     if (index !== -1) {
@@ -119,17 +129,38 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.querySelector('#add-group').addEventListener('click', () => {
-        const newGroupInput = document.querySelector('#new-group')
-        const newGroup = newGroupInput.value.trim()
-        if (newGroup) {
-            savedGroups.push(newGroup)
-            newGroupInput.value = ''
-            displayGroupSidebar()
-        }
+        const newGroupInput = document.createElement('input')
+        newGroupInput.type = 'text'
+        newGroupInput.className = 'form-control'
+        newGroupInput.id = 'new-group'
+        newGroupInput.placeholder = 'Введите название'
+        newGroupInput.addEventListener('input', (e) => {
+            e.preventDefault()
+        })
+    
+        groupSidebar.querySelector('.sidebar-body').appendChild(newGroupInput)
     })
     
     document.querySelector('#save-groups').addEventListener('click', () => {
-        localStorage.setItem('groups', JSON.stringify(savedGroups))
+        const groupInputs = groupSidebar.querySelectorAll('input[type="text"]')
+        const newGroups = []
+    
+        groupInputs.forEach((input) => {
+            const newGroup = input.value.trim()
+            if (newGroup) {
+                newGroups.push(newGroup)
+            }
+        })
+    
+        if (newGroups.length > 0) {
+            savedGroups.push(...newGroups)
+            localStorage.setItem('groups', JSON.stringify(savedGroups))
+            displayGroupSidebar()
+        }
+    
+        groupInputs.forEach((input) => {
+            input.value = ''
+        })
         displayGroupsAccordion()
     })
 
@@ -163,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.value = ''
         numberInput.value = ''
         displayGroupsAccordion()
-
     })
-    
+
 })
