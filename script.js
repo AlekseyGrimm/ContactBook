@@ -8,48 +8,66 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
         const groupAccordion = document.querySelector('#group-accordion')
         groupAccordion.innerHTML = ''
+    
         savedGroups.forEach((group) => {
-            const groupLi = document.createElement('div')
-            const groupButton = document.createElement('button')
-            groupButton.className = 'accordion-button'
-            groupButton.textContent = group
-
-            groupButton.addEventListener('click', () => {
-                const panel = groupButton.nextElementSibling
-                if (panel.style.display === 'block') {
-                    panel.style.display = 'none'
-                } else {
-                    panel.style.display = 'block'
-                }
-            })
-
-            const groupPanel = document.createElement('div')
-            groupPanel.className = 'accordion-panel'
-            groupPanel.style.display = 'none'
-
-            const groupContactList = document.createElement('ul')
-            groupContactList.className = 'group-contact-list'
-
+            const card = document.createElement('div')
+            card.className = 'card'
+    
+            // Заголовок карточки (кнопка аккордеона)
+            const cardHeader = document.createElement('div')
+            cardHeader.className = 'accordion-header'
+            cardHeader.id = `heading-${group}`
+    
+            const button = document.createElement('button')
+            button.className = 'accordion-button'
+            button.setAttribute('data-bs-toggle', 'collapse')
+            button.setAttribute('data-bs-target', `#collapse-${group}`)
+            button.textContent = group
+    
+            cardHeader.appendChild(button)
+            card.appendChild(cardHeader)
+    
+            // Содержимое карточки (панель аккордеона)
+            const collapse = document.createElement('div')
+            collapse.id = `collapse-${group}`
+            collapse.className = 'collapse'
+            collapse.setAttribute('data-bs-parent', '#group-accordion')
+    
+            const cardBody = document.createElement('div')
+            cardBody.className = 'card-body'
+    
             savedContacts.forEach((contact) => {
                 if (contact.group === group) {
-                    const contactLi = document.createElement('li')
-                    contactLi.textContent = `${contact.name} (${contact.number})`
-
+                    const contactDiv = document.createElement('div')
+                    contactDiv.className = 'contactDiv'
+                    contactDiv.textContent = `${contact.name}(${contact.number})`
+    
                     const deleteButton = document.createElement('button')
-                    deleteButton.className = 'delete-contact-btn'
+                    // deleteButton.className = 'btn btn-danger'
                     deleteButton.innerHTML = '<i class="bi bi-trash"></i>'
                     deleteButton.addEventListener('click', () => deleteContact(contact))
-
-                    groupContactList.appendChild(contactLi)
-                    contactLi.appendChild(deleteButton)
+    
+                    contactDiv.appendChild(deleteButton)
+                    cardBody.appendChild(contactDiv)
                 }
             })
-
-            groupPanel.appendChild(groupContactList)
-            groupLi.appendChild(groupButton)
-            groupLi.appendChild(groupPanel)
-            groupAccordion.appendChild(groupLi)
+    
+            collapse.appendChild(cardBody)
+            card.appendChild(collapse)
+    
+            groupAccordion.appendChild(card)
         })
+    }
+
+    const deleteContact = (contact) => {
+        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
+        const index = savedContacts.findIndex((c) => c.name === contact.name && c.number === contact.number)
+    
+        if (index !== -1) {
+            savedContacts.splice(index, 1)
+            localStorage.setItem('contacts', JSON.stringify(savedContacts))
+            displayGroupsAccordion()
+        }
     }
 
     const displayGroupSidebar = () => {

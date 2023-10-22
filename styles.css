@@ -49,6 +49,12 @@
     margin-bottom: 5px;
 }
 
+.contactDiv{
+    padding: 10px;
+    border-bottom: groove;
+    border-width: thin;
+}
+
 /* Стили для кнопок "Добавить контакт" и "Группы" */
 .navbar{
     display: flex;
