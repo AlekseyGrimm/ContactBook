@@ -96,6 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (index !== -1) {
                         savedGroups.splice(index, 1)
                         localStorage.setItem('groups', JSON.stringify(savedGroups))
+
+                        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+                        const updatedContacts = savedContacts.filter(contact => contact.group !== group);
+                        localStorage.setItem('contacts', JSON.stringify(updatedContacts));
                         displayGroupSidebar()
                         displayGroupsAccordion()
                     }
