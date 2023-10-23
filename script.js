@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     const deleteContact = (contact) => {
-        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
-        const index = savedContacts.findIndex((c) => c.name === contact.name && c.number === contact.number);
+        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
+        const index = savedContacts.findIndex((c) => c.name === contact.name && c.number === contact.number)
     
         if (index !== -1) {
             savedContacts.splice(index, 1)
@@ -94,12 +94,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const editContact = (contactToEdit) => {
         const editContactModal = new bootstrap.Modal(document.getElementById('editContactModal'))
         editContactModal.show()
-
-        // Заполнения модалки редактора контактов
+    
+        // Заполнение модального окна редактирования контакта
         const nameInput = document.querySelector('#editName')
         const numberInput = document.querySelector('#editNumber')
         const groupInput = document.querySelector('#editGroup')
-
+        const errorMessage = document.getElementById('error-message')
+    
+        // Заполнение полей модального окна данными контакта
         nameInput.value = contactToEdit.name
         numberInput.value = contactToEdit.number
         groupInput.value = contactToEdit.group
@@ -110,31 +112,39 @@ document.addEventListener('DOMContentLoaded', () => {
             option.value = group
             groupInput.appendChild(option)
         })
-
-        // Обработчик события для кнопки "Сохранить изменения"
+    
         document.querySelector('#saveContactChanges').addEventListener('click', () => {
-            debugger
             const newName = nameInput.value.trim()
             const newNumber = numberInput.value.trim()
             const newGroup = groupInput.value
-        
-            if (newName !== '' && newNumber !== '') {
+    
+            formatPhoneNumber(numberInput)
+    
+            if (newName !== '' && newNumber !== '' && newNumber !== 'Некорректный номер') {
                 contactToEdit.name = newName
                 contactToEdit.number = newNumber
                 contactToEdit.group = newGroup
-        
+    
                 const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
                 const contactIndex = savedContacts.findIndex(contact => contact.id === contactToEdit.id)
-        
+    
                 if (contactIndex !== -1) {
                     savedContacts[contactIndex] = contactToEdit
                 }
                 localStorage.setItem('contacts', JSON.stringify(savedContacts))
                 displayGroupsAccordion(savedContacts)
                 editContactModal.hide()
+            } else {
+                errorMessage.style.display = 'block'
+                errorMessage.textContent = 'Заполните обязательные поля: ФИО и номер.'
             }
         })
-    }        
+    
+        numberInput.addEventListener('input', function () {
+            formatPhoneNumber(this)
+        })
+    }
+    
 
     const displayGroupSidebar = () => {
         const groupSidebar = document.querySelector('#group-sidebar')
