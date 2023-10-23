@@ -1,48 +1,47 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const overlay = document.querySelector('.overlay')    
-    const savedGroups = JSON.parse(localStorage.getItem('groups')) || []
-    const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
+    const overlay = document.querySelector('.overlay')
+    const savedGroups = JSON.parse(localStorage.getItem('groups')) || []      
     const groupDropdown = document.querySelector('#group')
     const groupSidebar = document.querySelector('#group-sidebar')
+    const groupAccordion = document.querySelector('#group-accordion')
 
-    const displayGroupsAccordion = () => {        
-        const groupAccordion = document.querySelector('#group-accordion')
+    const displayGroupsAccordion = () => {
+        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
         groupAccordion.innerHTML = ''
-    
         savedGroups.forEach((group) => {
             const card = document.createElement('div')
             card.className = 'card'
-    
+
             // Заголовок аккордеона
             const cardHeader = document.createElement('div')
             cardHeader.className = 'accordion-header'
             cardHeader.id = `heading-${group}`
-    
+
             const button = document.createElement('button')
             button.className = 'accordion-button'
             button.setAttribute('data-bs-toggle', 'collapse')
             button.setAttribute('data-bs-target', `#collapse-${group}`)
             button.textContent = group
-    
+
             cardHeader.appendChild(button)
             card.appendChild(cardHeader)
-    
+
             // Содержимое аккордеона
             const collapse = document.createElement('div')
             collapse.id = `collapse-${group}`
             collapse.className = 'collapse'
             collapse.setAttribute('data-bs-parent', '#group-accordion')
-    
+
             const cardBody = document.createElement('div')
             cardBody.className = 'card-body'
-    
+
             savedContacts.forEach((contact) => {
                 if (contact.group === group) {
                     const contactDiv = document.createElement('div')
                     contactDiv.className = 'contactDiv'
                     contactDiv.innerHTML = `<div>
                                                 <span>${contact.name}</span>                                                
-                                            </div>`   
+                                            </div>`
 
                     const groupButtons = document.createElement('div')
                     groupButtons.className = 'groupButtons'
@@ -67,22 +66,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     groupButtons.appendChild(editButton)
                     groupButtons.appendChild(deleteButton)
-                    
-                    contactDiv.appendChild(groupButtons)                    
+
+                    contactDiv.appendChild(groupButtons)
                     cardBody.appendChild(contactDiv)
                 }
             })
-    
+
             collapse.appendChild(cardBody)
             card.appendChild(collapse)
-    
+
             groupAccordion.appendChild(card)
         })
     }
 
+
     const deleteContact = (contact) => {
-        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
-        const index = savedContacts.findIndex((c) => c.name === contact.name && c.number === contact.number)
+        const savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+        const index = savedContacts.findIndex((c) => c.name === contact.name && c.number === contact.number);
     
         if (index !== -1) {
             savedContacts.splice(index, 1)
@@ -99,46 +99,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const nameInput = document.querySelector('#editName')
         const numberInput = document.querySelector('#editNumber')
         const groupInput = document.querySelector('#editGroup')
-    
+
         nameInput.value = contactToEdit.name
         numberInput.value = contactToEdit.number
         groupInput.value = contactToEdit.group
         groupInput.innerHTML = ''
-            savedGroups.forEach((group) => {
-                const option = document.createElement('option')
-                option.textContent = group
-                option.value = group
-                groupInput.appendChild(option)
-            })
-    
+        savedGroups.forEach((group) => {
+            const option = document.createElement('option')
+            option.textContent = group
+            option.value = group
+            groupInput.appendChild(option)
+        })
+
         // Обработчик события для кнопки "Сохранить изменения"
         document.querySelector('#saveContactChanges').addEventListener('click', () => {
+            debugger
             const newName = nameInput.value.trim()
             const newNumber = numberInput.value.trim()
             const newGroup = groupInput.value
-    
+        
             if (newName !== '' && newNumber !== '') {
-                // Инициализирование изменений к объекту контакта
                 contactToEdit.name = newName
                 contactToEdit.number = newNumber
                 contactToEdit.group = newGroup
-    
-                // Обновляем информацию в localStorage и UI
+        
+                const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
+                const contactIndex = savedContacts.findIndex(contact => contact.id === contactToEdit.id)
+        
+                if (contactIndex !== -1) {
+                    savedContacts[contactIndex] = contactToEdit
+                }
                 localStorage.setItem('contacts', JSON.stringify(savedContacts))
-                displayGroupsAccordion()
-    
-                // Закрываем модальное окно
+                displayGroupsAccordion(savedContacts)
                 editContactModal.hide()
             }
         })
-    }
+    }        
 
     const displayGroupSidebar = () => {
         const groupSidebar = document.querySelector('#group-sidebar')
         const groupSidebarBody = groupSidebar.querySelector('.sidebar-body')
-    
+
         groupSidebarBody.innerHTML = ''
-    
+
         if (savedGroups.length === 0) {
             const noGroupsText = document.createElement('p')
             noGroupsText.textContent = 'Нет доступных групп'
@@ -148,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const groupItem = document.createElement('div')
                 groupItem.classList.add('sidebar-body-group')
                 groupItem.textContent = group
-                
+
                 // Кнопка "Удалить" для каждой группы
                 const deleteButton = document.createElement('button')
                 deleteButton.setAttribute('type', 'button')
@@ -167,15 +170,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         displayGroupsAccordion()
                     }
                 })
-    
+
                 groupItem.appendChild(deleteButton)
                 groupSidebarBody.appendChild(groupItem)
             })
         }
     }
 
-    displayGroupsAccordion()   
-   
+    displayGroupsAccordion()
+
 
     document.querySelector('#add-contact-btn').addEventListener('click', () => {
         document.querySelector('#sidebar').classList.add('show')
@@ -222,27 +225,27 @@ document.addEventListener('DOMContentLoaded', () => {
         newGroupInput.addEventListener('input', (e) => {
             e.preventDefault()
         })
-    
+
         groupSidebar.querySelector('.sidebar-body').appendChild(newGroupInput)
     })
-    
+
     document.querySelector('#save-groups').addEventListener('click', () => {
         const groupInputs = groupSidebar.querySelectorAll('input[type="text"]')
         const newGroups = []
-    
+
         groupInputs.forEach((input) => {
             const newGroup = input.value.trim()
             if (newGroup) {
                 newGroups.push(newGroup)
             }
         })
-    
+
         if (newGroups.length > 0) {
             savedGroups.push(...newGroups)
             localStorage.setItem('groups', JSON.stringify(savedGroups))
             displayGroupSidebar()
         }
-    
+
         groupInputs.forEach((input) => {
             input.value = ''
         })
@@ -253,11 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const nameInput = document.querySelector('#name')
         const numberInput = document.querySelector('#number')
         const groupInput = document.querySelector('#group')
-    
+
         const name = nameInput.value.trim()
         const number = numberInput.value.trim()
         const group = groupInput.value
-    
+
         // Проверяем, что обязательные поля заполнены
         if (name === '' || number === '') {
             // Можно добавить модальное окно
@@ -278,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('contacts', JSON.stringify(savedContacts))
         nameInput.value = ''
         numberInput.value = ''
+
         displayGroupsAccordion()
     })
 
