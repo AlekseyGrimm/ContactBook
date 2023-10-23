@@ -53,6 +53,8 @@
     padding: 10px;
     border-bottom: groove;
     border-width: thin;
+    display: flex;
+    justify-content: space-between;
 }
 
 /* Стили для кнопок "Добавить контакт" и "Группы" */
@@ -135,4 +137,14 @@
 .group-contact-list li {
     padding: 5px;
     border-bottom: 1px solid #ddd;
+}
+
+.card{
+    margin-bottom: 1em;
+}
+
+.groupButtons{
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
 }
