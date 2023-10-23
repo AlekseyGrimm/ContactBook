@@ -1,89 +1,94 @@
 document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.querySelector('.overlay')
-    const savedGroups = JSON.parse(localStorage.getItem('groups')) || []      
+    const savedGroups = JSON.parse(localStorage.getItem('groups')) || []
     const groupDropdown = document.querySelector('#group')
     const groupSidebar = document.querySelector('#group-sidebar')
     const groupAccordion = document.querySelector('#group-accordion')
 
     const displayGroupsAccordion = () => {
         const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
-        groupAccordion.innerHTML = ''
-        savedGroups.forEach((group) => {
-            const card = document.createElement('div')
-            card.className = 'card'
+        if (savedContacts.length === 0) {
+            // Если контактов нет, выводим сообщение
+            groupAccordion.innerHTML = '<p class="text-center">Список контактов пуст</p>'
+        } else {
+            groupAccordion.innerHTML = '';
+            savedGroups.forEach((group) => {
+                const card = document.createElement('div')
+                card.className = 'card'
 
-            // Заголовок аккордеона
-            const cardHeader = document.createElement('div')
-            cardHeader.className = 'accordion-header'
-            cardHeader.id = `heading-${group}`
+                // Заголовок аккордеона
+                const cardHeader = document.createElement('div')
+                cardHeader.className = 'accordion-header'
+                cardHeader.id = `heading-${group}`
 
-            const button = document.createElement('button')
-            button.className = 'accordion-button'
-            button.setAttribute('data-bs-toggle', 'collapse')
-            button.setAttribute('data-bs-target', `#collapse-${group}`)
-            button.textContent = group
+                const button = document.createElement('button')
+                button.className = 'accordion-button'
+                button.setAttribute('data-bs-toggle', 'collapse')
+                button.setAttribute('data-bs-target', `#collapse-${group}`)
+                button.textContent = group
 
-            cardHeader.appendChild(button)
-            card.appendChild(cardHeader)
+                cardHeader.appendChild(button)
+                card.appendChild(cardHeader)
 
-            // Содержимое аккордеона
-            const collapse = document.createElement('div')
-            collapse.id = `collapse-${group}`
-            collapse.className = 'collapse'
-            collapse.setAttribute('data-bs-parent', '#group-accordion')
+                // Содержимое аккордеона
+                const collapse = document.createElement('div')
+                collapse.id = `collapse-${group}`
+                collapse.className = 'collapse'
+                collapse.setAttribute('data-bs-parent', '#group-accordion')
 
-            const cardBody = document.createElement('div')
-            cardBody.className = 'card-body'
+                const cardBody = document.createElement('div')
+                cardBody.className = 'card-body'
 
-            savedContacts.forEach((contact) => {
-                if (contact.group === group) {
-                    const contactDiv = document.createElement('div')
-                    contactDiv.className = 'contactDiv'
-                    contactDiv.innerHTML = `<div>
+                savedContacts.forEach((contact) => {
+                    if (contact.group === group) {
+                        const contactDiv = document.createElement('div')
+                        contactDiv.className = 'contactDiv'
+                        contactDiv.innerHTML = `<div>
                                                 <span>${contact.name}</span>                                                
                                             </div>`
 
-                    const groupButtons = document.createElement('div')
-                    groupButtons.className = 'groupButtons'
-                    const deleteButton = document.createElement('div')
-                    deleteButton.innerHTML = `<button type="button" class="btn btn-outline-secondary">
+                        const groupButtons = document.createElement('div')
+                        groupButtons.className = 'groupButtons'
+                        const deleteButton = document.createElement('div')
+                        deleteButton.innerHTML = `<button type="button" class="btn btn-outline-secondary">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
                                                         <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
                                                     </svg>
                                                 </button>`
 
-                    const editButton = document.createElement('div')
-                    editButton.innerHTML = `<span>${contact.number}</span>
+                        const editButton = document.createElement('div')
+                        editButton.innerHTML = `<span>${contact.number}</span>
                                             <button type="button" class="btn btn-outline-secondary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                                                     <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"></path>
                                                 </svg>
                                             </button>`
 
-                    deleteButton.addEventListener('click', () => deleteContact(contact))
-                    editButton.addEventListener('click', () => editContact(contact))
+                        deleteButton.addEventListener('click', () => deleteContact(contact))
+                        editButton.addEventListener('click', () => editContact(contact))
 
-                    groupButtons.appendChild(editButton)
-                    groupButtons.appendChild(deleteButton)
+                        groupButtons.appendChild(editButton)
+                        groupButtons.appendChild(deleteButton)
 
-                    contactDiv.appendChild(groupButtons)
-                    cardBody.appendChild(contactDiv)
-                }
+                        contactDiv.appendChild(groupButtons)
+                        cardBody.appendChild(contactDiv)
+                    }
+                })
+
+                collapse.appendChild(cardBody)
+                card.appendChild(collapse)
+
+                groupAccordion.appendChild(card)
             })
-
-            collapse.appendChild(cardBody)
-            card.appendChild(collapse)
-
-            groupAccordion.appendChild(card)
-        })
+        }
     }
 
 
     const deleteContact = (contact) => {
         const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
         const index = savedContacts.findIndex((c) => c.name === contact.name && c.number === contact.number)
-    
+
         if (index !== -1) {
             savedContacts.splice(index, 1)
             localStorage.setItem('contacts', JSON.stringify(savedContacts))
@@ -94,13 +99,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const editContact = (contactToEdit) => {
         const editContactModal = new bootstrap.Modal(document.getElementById('editContactModal'))
         editContactModal.show()
-    
+
         // Заполнение модального окна редактирования контакта
         const nameInput = document.querySelector('#editName')
         const numberInput = document.querySelector('#editNumber')
         const groupInput = document.querySelector('#editGroup')
         const errorMessage = document.getElementById('error-message')
-    
+
         // Заполнение полей модального окна данными контакта
         nameInput.value = contactToEdit.name
         numberInput.value = contactToEdit.number
@@ -112,22 +117,22 @@ document.addEventListener('DOMContentLoaded', () => {
             option.value = group
             groupInput.appendChild(option)
         })
-    
+
         document.querySelector('#saveContactChanges').addEventListener('click', () => {
             const newName = nameInput.value.trim()
             const newNumber = numberInput.value.trim()
             const newGroup = groupInput.value
-    
+
             formatPhoneNumber(numberInput)
-    
+
             if (newName !== '' && newNumber !== '' && newNumber !== 'Некорректный номер') {
                 contactToEdit.name = newName
                 contactToEdit.number = newNumber
                 contactToEdit.group = newGroup
-    
+
                 const savedContacts = JSON.parse(localStorage.getItem('contacts')) || []
                 const contactIndex = savedContacts.findIndex(contact => contact.id === contactToEdit.id)
-    
+
                 if (contactIndex !== -1) {
                     savedContacts[contactIndex] = contactToEdit
                 }
@@ -139,12 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessage.textContent = 'Заполните обязательные поля: ФИО и номер.'
             }
         })
-    
+
         numberInput.addEventListener('input', function () {
             formatPhoneNumber(this)
         })
     }
-    
+
 
     const displayGroupSidebar = () => {
         const groupSidebar = document.querySelector('#group-sidebar')
@@ -160,13 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
             savedGroups.forEach((group) => {
                 const groupItem = document.createElement('div')
                 groupItem.classList.add('sidebar-body-group')
-                groupItem.textContent = group
+                groupItem.innerHTML = `<div class='body-group'>${group}</div>`
 
                 // Кнопка "Удалить" для каждой группы
-                const deleteButton = document.createElement('button')
-                deleteButton.setAttribute('type', 'button')
-                deleteButton.setAttribute('class', 'btn-close')
-                deleteButton.setAttribute('aria-label', 'Close')
+                const deleteButton = document.createElement('biv')
+                deleteButton.innerHTML = `<button type="button" class="btn btn-outline-secondary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
+                                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+                                                </svg>
+                                            </button>`
                 deleteButton.addEventListener('click', () => {
                     const index = savedGroups.indexOf(group)
                     if (index !== -1) {
@@ -212,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formattedPhoneNumber += ` - ${phoneNumber.slice(9, 11)}`
             }
 
-            input.value = formattedPhoneNumber            
+            input.value = formattedPhoneNumber
         } else {
             input.value = 'Некорректный номер'
         }
@@ -223,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputElement = document.getElementById('number')
     if (inputElement) {
         inputElement.addEventListener('input', function () {
-            formatPhoneNumber(this)            
+            formatPhoneNumber(this)
         })
         displayGroupsAccordion()
     }
