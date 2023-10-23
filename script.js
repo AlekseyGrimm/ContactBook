@@ -179,6 +179,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     displayGroupsAccordion()
 
+    const formatPhoneNumber = (input) => {
+        const phoneNumber = input.value.replace(/[^\d]+/g, '')
+
+        // Проверка валидности номера
+        if (phoneNumber.length >= 1 && phoneNumber.length <= 11) {
+
+            if (phoneNumber.length >= 8) {
+                formattedPhoneNumber += ` - ${phoneNumber.slice(7, 9)}`
+            }
+
+            if (phoneNumber.length >= 10) {
+                formattedPhoneNumber += ` - ${phoneNumber.slice(9, 11)}`
+            }
+
+            input.value = formattedPhoneNumber            
+        } else {
+            input.value = 'Некорректный номер'
+        }
+
+
+    }
+
+    const inputElement = document.getElementById('number')
+    if (inputElement) {
+        inputElement.addEventListener('input', function () {
+            formatPhoneNumber(this)            
+        })
+        displayGroupsAccordion()
+    }
+
 
     document.querySelector('#add-contact-btn').addEventListener('click', () => {
         document.querySelector('#sidebar').classList.add('show')
