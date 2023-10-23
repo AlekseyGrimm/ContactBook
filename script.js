@@ -184,6 +184,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Проверка валидности номера
         if (phoneNumber.length >= 1 && phoneNumber.length <= 11) {
+            let formattedPhoneNumber = '+7'
+
+            if (phoneNumber.length >= 2) {
+                formattedPhoneNumber += ` (${phoneNumber.slice(1, 4)}`
+            }
+
+            if (phoneNumber.length >= 5) {
+                formattedPhoneNumber += `) ${phoneNumber.slice(4, 7)}`
+            }
 
             if (phoneNumber.length >= 8) {
                 formattedPhoneNumber += ` - ${phoneNumber.slice(7, 9)}`
