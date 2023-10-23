@@ -148,3 +148,7 @@
     flex-direction: row;
     gap: 1em;
 }
+
+.modal-body >*{
+    margin-bottom: 1em;
+}
